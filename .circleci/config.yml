@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  slack: circleci/slack@4.10.1
+
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
@@ -31,6 +34,17 @@ commands:
             #  Add revert code here. You can find this in the Getting Started section.
               exit 1
             fi
+  notify-fails:
+    steps:
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+
+  notify-success:
+    step:
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
             
 jobs:
   build-frontend:
@@ -43,8 +57,10 @@ jobs:
       - run:
           name: Build front-end
           command: |
-            # Your code here
-            exit 1
+            cd frontend
+            npm cache clean -f
+            npm install
+            npm run build
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -59,42 +75,87 @@ jobs:
       - run:
           name: Back-end build
           command: |
-             # Your code here
-             exit 1
+            cd backend
+            npm cache clean -f
+            npm install
+            npm run build
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
 
   test-frontend:
     docker:
+      - image: circleci/node:13.8.0
       # Docker image here
     steps:
+      - checkout
       # Checkout code from git
+      - restore_cache:
+          keys: [frontend-build]
       # Restore from cache
+      - run:
+        name: Test Front-end
+        command: |
+          cd frontend
+          npm cache clean -f
+          npm install
+          npm run test
       # Your job code here
                 
   test-backend:
     docker:
+      - image: circleci/node:13.8.0
       # Docker image here
     steps:
+      - checkout
       # Checkout code from git
+      - restore_cache:
+          keys: [backend-build]
       # Restore from cache
+      - run:
+        name: Test Back-end
+        command: |
+          cd backend
+          npm cache clean -f
+          npm install
+          npm run test
       # Your job code here
             
   scan-frontend:
     docker:
+      - image: circleci/node:13.8.0
       # Docker image here
     steps:
+      - checkout
       # Checkout code from git
+      - restore_cache:
+          keys: [frontend-build]
       # Restore from cache
+      - run:
+        name: Scan Front-end
+        command: | 
+          cd frontend
+          npm install
+          npm audit fix --audit-level=critical --force
+          npm audit --audit-level=critical
       # Your job code here
 
   scan-backend:
     docker:
+      - image: circleci/node:13.8.0
       # Docker image here
     steps:
+      - checkout
       # Checkout code from git
-      # Restore from cache
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+        name: Scan Back-end
+        command: | 
+          cd backend
+          npm install
+          npm audit fix --audit-level=critical --force
+          npm audit --audit-level=critical
       # Your job code here
 
   deploy-infrastructure:
@@ -280,7 +341,7 @@ workflows:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
-              only: [test-feature-branch]
+              only: [master]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run-migrations:
