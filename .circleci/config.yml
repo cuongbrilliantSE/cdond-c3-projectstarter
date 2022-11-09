@@ -120,12 +120,12 @@ jobs:
           keys: [frontend-build]
       # Restore from cache
       - run:
-        name: Test Front-end
-        command: |
-          cd frontend
-          npm cache clean -f
-          npm install
-          npm run test
+          name: Test Front-end
+          command: |
+            cd frontend
+            npm cache clean -f
+            npm install
+            npm run test
       # Your job code here
       - notify-success
       - notify-fails
@@ -141,12 +141,12 @@ jobs:
           keys: [backend-build]
       # Restore from cache
       - run:
-        name: Test Back-end
-        command: |
-          cd backend
-          npm cache clean -f
-          npm install
-          npm run test
+          name: Test Back-end
+          command: |
+            cd backend
+            npm cache clean -f
+            npm install
+            npm run test
       # Your job code here
       - notify-success
       - notify-fails
@@ -162,12 +162,12 @@ jobs:
           keys: [frontend-build]
       # Restore from cache
       - run:
-        name: Scan Front-end
-        command: | 
-          cd frontend
-          npm install
-          npm audit fix --audit-level=critical --force
-          npm audit --audit-level=critical
+          name: Scan Front-end
+          command: | 
+            cd frontend
+            npm install
+            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
       # Your job code here
       - notify-success
       - notify-fails
@@ -175,20 +175,17 @@ jobs:
   scan-backend:
     docker:
       - image: circleci/node:13.8.0
-      # Docker image here
     steps:
       - checkout
-      # Checkout code from git
       - restore_cache:
           keys: [backend-build]
       - run:
-        name: Scan Back-end
-        command: | 
-          cd backend
-          npm install
-          npm audit fix --audit-level=critical --force
-          npm audit --audit-level=critical
-      # Your job code here
+          name: Audit back-end
+          command: |
+            cd backend
+            npm install
+            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
       - notify-success
       - notify-fails
 
