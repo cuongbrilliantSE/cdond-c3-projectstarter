@@ -22,14 +22,16 @@ commands:
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
-      # Add parameter here
+      workflow_id:
+        type: string 
     steps:
       - run:
           name: Revert migrations
           # Add when this will run
+          when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            VALUE=$(curl -k https://kvdb.io/KWmftMr7VSgZreE7NA9w5h/migration_${CIRCLE_WORKFLOW_ID:0:7})
+            VALUE=$(curl -k https://kvdb.io/7ksVwv1g2UYniaoLBsUHGz/migration_${CIRCLE_WORKFLOW_ID:0:7})
             if(( $VALUE==1 )); 
             then
               cd ~/project/backend
@@ -306,17 +308,13 @@ jobs:
   deploy-backend:
     docker:
       - image: python:3.11-rc-alpine
-      # Docker image here that supports Ansible
     steps:
       - checkout
-      # Checkout code from git
       - add_ssh_keys:
           fingerprints:
             - "1f:a3:0e:47:f5:00:f6:b8:22:65:5d:96:c9:03:98:ea"
-      # Add ssh keys with fingerprint
       - attach_workspace:
           at: ~/
-      # attach workspace
       - run:
           name: Install dependencies
           command: |
@@ -336,7 +334,6 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment
       - revert-migrations
-      # Here's where you will add some code to rollback on failure  
 
   smoke-test:
     docker:
@@ -358,10 +355,6 @@ jobs:
             else
                 return 1
             fi
-      # - run:
-      #     name: Backend smoke test.
-      #     command: |
-      #       # your code here
       - run:
           name: Frontend smoke test.
           command: |
