@@ -14,7 +14,6 @@
 
   pre_tasks:
     - name: "wait 600 seconds for target connection to become reachable/usable."
-      # Your code here
       wait_for_connection:
         timeout: 600
 
@@ -24,7 +23,6 @@
         name: ["python3"]
         state: latest
         update_cache: yes
-      # Your code here
 
   # Get the environment variables from CircleCI and add to the EC2 instance
   environment:
@@ -38,8 +36,6 @@
     - TYPEORM_USERNAME: "{{ lookup('env','TYPEORM_USERNAME') }}"
     - TYPEORM_PASSWORD: "{{ lookup('env','TYPEORM_PASSWORD') }}"
     - TYPEORM_DATABASE: "{{ lookup('env','TYPEORM_DATABASE') }}" 
-    # Add more env vars here
 
   roles:
     - configure-server
-    # Your code here
