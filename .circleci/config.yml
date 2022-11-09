@@ -248,15 +248,14 @@ jobs:
   run-migrations:
     docker:
     - image: circleci/node:13.8.0
-      # Docker image here that supports NodeJS
     steps:
       - checkout
-      # Checkout code from git
       - run:
           name: Run migrations
           command: |
             cd ~/project/backend
             npm install
+            npm audit fix --force
             npm run migrations > migration_output
       - run:
           name: Send migration results to memstash
@@ -265,9 +264,9 @@ jobs:
             if grep -q "has been executed successfully" migration_output
             then
               echo "insecure" >> ~/.curlrc
-              curl https://kvdb.io/16E9AJvRFmYAMat3Fah4uy/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1' -k
+              curl https://kvdb.io/7ksVwv1g2UYniaoLBsUHGz/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1' -k
             else
-              curl https://kvdb.io/16E9AJvRFmYAMat3Fah4uy/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '0' -k            
+              curl https://kvdb.io/7ksVwv1g2UYniaoLBsUHGz/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '0' -k            
             fi
       - destroy-environment
      # Here's where you will add some code to rollback on failure      
