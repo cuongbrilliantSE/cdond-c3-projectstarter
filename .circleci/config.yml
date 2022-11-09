@@ -154,13 +154,10 @@ jobs:
   scan-frontend:
     docker:
       - image: circleci/node:13.8.0
-      # Docker image here
     steps:
       - checkout
-      # Checkout code from git
       - restore_cache:
           keys: [frontend-build]
-      # Restore from cache
       - run:
           name: Scan Front-end
           command: | 
@@ -168,7 +165,6 @@ jobs:
             npm install
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
-      # Your job code here
       - notify-success
       - notify-fails
 
