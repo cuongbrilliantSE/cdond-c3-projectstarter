@@ -7,7 +7,7 @@ commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
-      # Add parameter here   
+      # Add parameter here
     steps:
       - run:
           name: Destroy environments
@@ -22,7 +22,7 @@ commands:
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
-      # Add parameter here     
+      # Add parameter here
     steps:
       - run:
           name: Revert migrations
@@ -182,10 +182,8 @@ jobs:
   deploy-infrastructure:
     docker:
       - image : amazon/aws-cli
-      # Docker image here that supports AWS CLI
     steps:
       - checkout
-      # Checkout code from git
       - run: yum -y install tar gzip
       - run:
           name: Ensure back-end infrastructure exists
@@ -223,7 +221,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: 
+          fingerprints:
             - "1f:a3:0e:47:f5:00:f6:b8:22:65:5d:96:c9:03:98:ea"
       - attach_workspace:
           at: ~/
@@ -245,8 +243,7 @@ jobs:
             cd .circleci/ansible
             export ansible_host_key_checking= false
             ansible-playbook -i inventory.txt  configure-prometheus-node-export.yml
-      # Here's where you will add some code to rollback on failure  
-      - destroy-environment       
+      - destroy-environment      
 
   run-migrations:
     docker:
