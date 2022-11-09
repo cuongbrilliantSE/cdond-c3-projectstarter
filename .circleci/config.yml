@@ -194,7 +194,7 @@ jobs:
 
   deploy-infrastructure:
     docker:
-      - imgae : amazon/aws-cli
+      - image : amazon/aws-cli
       # Docker image here that supports AWS CLI
     steps:
       - checkout
