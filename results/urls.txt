@@ -1,0 +1,7 @@
+1. Public Url to GitHub repository (not private) [URL01]:
+https://github.com/DangHHDang/cdond-c3-projectstarter
+2. URL02: http://udapeople-ee599ed.s3-website-us-east-1.amazonaws.com/
+3. URL03: http://d31n0ci5nhu6he.cloudfront.net/#/employees
+4. URL04: http://18.206.205.170:3030/api/status
+5. URL05: http://ec2-54-235-14-144.compute-1.amazonaws.com:9090/alerts
+#############
