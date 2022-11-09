@@ -439,6 +439,9 @@ cleanup:
             
 
 workflows:
+  send-notification:
+    jobs:
+      - notify
   default:
     jobs:
       - build-frontend
