@@ -344,7 +344,7 @@ jobs:
           command: |
             apk add --update nodejs tar npm curl aws-cli
       - run:
-          name: Get backend url
+          name: Get backend url and smoke test
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances --filters "Name=tag-value,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --query "Reservations[*].Instances[].PublicIpAddress" --output text)
             echo ${BACKEND_IP}
