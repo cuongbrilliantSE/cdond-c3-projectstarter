@@ -361,7 +361,7 @@ jobs:
             echo ${BACKEND_IP}
             if curl "http://${BACKEND_IP}:3030/api/status" | grep "ok"
             then
-                return 0
+                return 1
             else
                 return 1
             fi
