@@ -375,8 +375,6 @@ jobs:
       #     name: Install dependencies
       #     command: |
       #       # your code here
-      - attach_workspace:
-          at: ~/
       - run:
           name: Update cloudfront distribution
           command: |
@@ -402,8 +400,6 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/
       - run:
           name: Get old stack workflow id AND Remove old stacks and files
           command: |
