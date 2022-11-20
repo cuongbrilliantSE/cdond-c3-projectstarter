@@ -96,6 +96,47 @@ jobs:
           paths:
             - backend/dist
 
+  test-frontend:
+    executor: node
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install junit coverage reporter
+          working_directory: ./frontend
+          command: npm install --save-dev jest-junit
+      - run:
+          name: Run tests with JUnit as reporter
+          working_directory: ./frontend
+          command: npm test -- --ci --runInBand --reporters=default --reporters=jest-junit && pwd && ls -la /tmp
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./test_results
+      - store_test_results:
+          path: ./frontend/test_results
+      - store_artifacts:
+          path: ./frontend/test_results
+
+  test-backend:
+    executor: node
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install junit coverage reporter
+          working_directory: ./backend
+          command: npm install --save-dev jest-junit
+      - run:
+          name: Run tests with JUnit as reporter
+          working_directory: ./backend
+          command: npm test -- --ci --runInBand --reporters=default --reporters=jest-junit && pwd
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./test_results
+      - store_test_results:
+          path: ./backend/test_results
+      - store_artifacts:
+          path: ./backend/test_results
 
 
 workflows:
@@ -109,4 +150,11 @@ workflows:
       - build-backend:
           requires:
             - install-backend-dependencies
+      - test-frontend:
+          requires:
+            - build-frontend
+      - test-backend:
+          requires:
+            - build-backend
+
 
