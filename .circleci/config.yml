@@ -51,7 +51,7 @@ jobs:
       - run:
           name: npm install
           working_directory: ./frontend
-          command: ls -la && npm install
+          command: ls -la && npm install --force
       - persist_to_workspace:
           root: .
           paths:
