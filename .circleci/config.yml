@@ -195,7 +195,7 @@ jobs:
             ls -la . ..
             printenv | 
             aws cloudformation deploy \
-              --template-file frontend.yaml \
+              --template-file files/frontend.yaml \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --tags project=udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
