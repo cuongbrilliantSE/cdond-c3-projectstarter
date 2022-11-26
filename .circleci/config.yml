@@ -220,6 +220,8 @@ workflows:
           requires:
             - build-frontend
 
+
+      ## INFRASTRUCTURE
       - deploy-infrastructure:
           filters:
             branches:
