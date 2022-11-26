@@ -189,7 +189,10 @@ jobs:
               --tags project=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: Deploy frontend infrastructure
-          command: |
+          command:
+            pwd
+            ls -la . ..
+            printenv |  
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yaml \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
