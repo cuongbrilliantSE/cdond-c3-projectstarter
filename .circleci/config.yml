@@ -190,7 +190,9 @@ jobs:
       - run:
           name: Deploy frontend infrastructure
           working_directory: ./.circleci/files
-          command: |    
+          command: |
+            pwd
+            ls -la . ..
             printenv | 
             aws cloudformation deploy \
               --template-file frontend.yaml \
