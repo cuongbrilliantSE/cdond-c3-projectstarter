@@ -190,7 +190,7 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --output text)
-            
+            echo "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
             curl -H "Content-Type: text/plain" https://kvdb.io/ADLJ6SptSeCKRoKvkky2r6/BACKEND_URL -d "http://$BACKEND_IP:3030"
       - run:
           name: Deploy frontend infrastructure
