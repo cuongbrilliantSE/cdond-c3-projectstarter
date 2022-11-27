@@ -23,6 +23,7 @@ commands:
       - run:
           name: Destroy udapeople backend cfn stack
           command: |
+            echo "AHIHI"
             aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.id >>
           environment:
             TERM: xterm-256color
