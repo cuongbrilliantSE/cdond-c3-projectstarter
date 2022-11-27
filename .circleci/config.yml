@@ -12,7 +12,7 @@ executors:
       - image: amazon/aws-cli
 
 commands:
-  destroy-environment:
+  destroy_environment:
     description: Destroy Cloud Formation Stacks and infrastructure
     parameters:
       when:
