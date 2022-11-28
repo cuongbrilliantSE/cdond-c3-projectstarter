@@ -1,5 +1,16 @@
 version: 2.1
 
+executors:
+  node:
+    docker:
+      - image: cimg/node:14.17.3
+  python:
+    docker:
+      - image: python:3.9.0-alpine
+  aws:
+    docker:
+      - image: amazon/aws-cli
+
 
 commands:
   destroy-environment:
@@ -37,8 +48,7 @@ commands:
 
 jobs:
   build-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    executor: node
     steps:
       - checkout
       - restore_cache:
@@ -55,8 +65,7 @@ jobs:
           key: frontend-build
 
   build-backend:
-    docker:
-      - image: circleci/node:13.8.0
+    executor: node
     steps:
       - checkout
       - restore_cache:
@@ -73,8 +82,7 @@ jobs:
           key: backend-build
 
   test-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    executor: node
     steps:
       - checkout
       - restore_cache:
@@ -101,8 +109,7 @@ jobs:
             npm run test
 
   scan-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    executor: node
     steps:
       - checkout
       - restore_cache:
@@ -117,8 +124,7 @@ jobs:
           # npm audit --audit-level=critical
 
   scan-backend:
-    docker:
-      - image: circleci/node:13.8.0
+    executor: node
     steps:
       - checkout
       - restore_cache:
@@ -133,8 +139,7 @@ jobs:
           # npm audit --audit-level=critical
 
   deploy-infrastructure:
-    docker:
-      - image : amazon/aws-cli
+    executor: aws
     steps:
       - checkout
       - run: yum -y install tar gzip
@@ -169,13 +174,11 @@ jobs:
       - destroy-environment
 
   configure-infrastructure:
-    docker:
-      - image: python:3.11-rc-alpine
+    executor: python
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints:
-            - "1f:a3:0e:47:f5:00:f6:b8:22:65:5d:96:c9:03:98:ea"
+          fingerprints: [ "66:d7:17:2f:40:42:fd:1a:04:a2:97:28:fe:8a:8a:50" ]
       - attach_workspace:
           at: ~/
       - run:
@@ -199,8 +202,7 @@ jobs:
       - destroy-environment
 
   run-migrations:
-    docker:
-      - image: circleci/node:13.8.0
+    executor: node
     steps:
       - checkout
       - run:
@@ -224,8 +226,7 @@ jobs:
       - destroy-environment
 
   deploy-frontend:
-    docker:
-      - image: python:3.11-rc-alpine
+    executor: python
     steps:
       - checkout
       - run:
@@ -256,13 +257,11 @@ jobs:
       - destroy-environment
 
   deploy-backend:
-    docker:
-      - image: python:3.11-rc-alpine
+    executor: python
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints:
-            - "1f:a3:0e:47:f5:00:f6:b8:22:65:5d:96:c9:03:98:ea"
+          fingerprints: [ "66:d7:17:2f:40:42:fd:1a:04:a2:97:28:fe:8a:8a:50" ]
       - attach_workspace:
           at: ~/
       - run:
@@ -286,8 +285,7 @@ jobs:
       - revert-migrations
 
   smoke-test:
-    docker:
-      - image: python:3.11-rc-alpine
+    executor: python
     steps:
       - checkout
       - run:
@@ -320,8 +318,7 @@ jobs:
       - revert-migrations
 
   cloudfront-update:
-    docker:
-      - image: amazon/aws-cli
+    executor: aws
     steps:
       - checkout
       - run:
@@ -336,8 +333,7 @@ jobs:
       - revert-migrations
 
   cleanup:
-    docker:
-      - image: amazon/aws-cli
+    executor: aws
     steps:
       - checkout
       - run:
