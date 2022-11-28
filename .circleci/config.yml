@@ -372,9 +372,8 @@ jobs:
           name: Backend smoke test.
           working_directory: ./backend
           command: |
-            export BACKEND_URL=$(curl https://kvdb.io/ADLJ6SptSeCKRoKvkky2r6/BACKEND_URL)
-            echo "$BACKEND_URL"
-#            curl "$BACKEND_URL/api/status"
+            export BACKEND_URL=$(curl https://kvdb.io/ADLJ6SptSeCKRoKvkky2r6/BACKEND_URL) 
+            curl "$BACKEND_URL/api/status"
       - run:
           name: Frontend smoke test.
           working_directory: ./backend
@@ -406,9 +405,7 @@ jobs:
             WorkflowID=$(aws cloudformation \
               list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
               --no-paginate --output text)
-            echo WorkflowID
-             curl -H "Content-Type: text/plain" https://kvdb.io/ADLJ6SptSeCKRoKvkky2r6/WorkflowID -d $WorkflowID
-
+            curl -H "Content-Type: text/plain" -H "token: 1513db3b-15be-4750-bae6-3a8d32dd6de2" --request PUT --data "$WorkflowID" https://api.memstash.io/values/WorkflowID
       - run:
           name: Update cloudfront distribution
           working_directory: ./.circleci/files
