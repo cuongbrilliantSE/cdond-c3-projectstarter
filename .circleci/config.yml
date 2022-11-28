@@ -40,7 +40,7 @@ commands:
           name: Revert migrations
           working_directory: ./backend
           command: |
-            SUCCESS=$(curl -H "token: 2a9e15d6-b9fa-4b1f-a5dc-e3b9643a9b63" --request GET https://api.memstash.io/values/DB_MIGRATION_<< parameters.id >>)
+            SUCCESS=$(curl -H "token: 2a9e15d6-b9fa-4b1f-a5dc-e3b9643a9b63" --request GET https://api.kvdb.io/values/DB_MIGRATION_<< parameters.id >>)
             echo $SUCCESS
             if [[ "$SUCCESS" == "success" ]]
             then
@@ -184,7 +184,7 @@ jobs:
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --tags project=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
-          name: Save backend URL in memstash
+          name: Save backend URL in kvdb
           command: |
             BACKEND_IP=$(aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
@@ -265,12 +265,12 @@ jobs:
           command: |
             npm run migrations > migration_status
       - run:
-          name: Send migration results to memstash
+          name: Send migration results to kvdb
           working_directory: ./backend
           command: |
             if grep -q "has been executed successfully" migration_status
             then
-              echo "DB migration was successful, will update memstash..."
+              echo "DB migration was successful, will update kvdb..."
             else
               echo "DB migration failed, please verify setup! Probably the database already exists. Verify setup!"
             fi
@@ -392,13 +392,14 @@ jobs:
             curl -sL https://rpm.nodesource.com/setup_10.x | bash -
             yum install -y nodejs
       - run:
-          name: Store old WorkflowID in memstash for cleanup phase
+          name: Store old WorkflowID in kvdb for cleanup phase
           working_directory: ./.circleci/files
           command: |
             WorkflowID=$(aws cloudformation \
               list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
               --no-paginate --output text)
-            curl -H "Content-Type: text/plain" https://kvdb.io/ADLJ6SptSeCKRoKvkky2r6/WorkflowID -d $WorkflowID
+            echo WorkflowID
+             curl -H "Content-Type: text/plain" https://kvdb.io/ADLJ6SptSeCKRoKvkky2r6/WorkflowID -d $WorkflowID
 
       - run:
           name: Update cloudfront distribution
