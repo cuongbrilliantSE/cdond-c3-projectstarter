@@ -7,7 +7,7 @@ commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
-      # Add parameter here
+    # Add parameter here
     steps:
       - run:
           name: Destroy environments
@@ -22,7 +22,7 @@ commands:
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
-    
+
     steps:
       - run:
           name: Revert migrations
@@ -47,7 +47,7 @@ commands:
       - slack/notify:
           event: pass
           template: success_tagged_deploy_1
-            
+
 jobs:
   notify:
     docker:
@@ -126,7 +126,7 @@ jobs:
             npm run test
       - notify-success
       - notify-fails
-                
+
   test-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -142,7 +142,7 @@ jobs:
             npm run test
       - notify-success
       - notify-fails
-            
+
   scan-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -152,7 +152,7 @@ jobs:
           keys: [frontend-build]
       - run:
           name: Scan Front-end
-          command: | 
+          command: |
             cd frontend
             npm install
             npm audit fix --force
@@ -213,7 +213,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - destroy-environment   
+      - destroy-environment
 
   configure-infrastructure:
     docker:
@@ -243,11 +243,11 @@ jobs:
             cd .circleci/ansible
             export ansible_host_key_checking= false
             ansible-playbook -i inventory.txt  configure-prometheus-node-export.yml
-      - destroy-environment      
+      - destroy-environment
 
   run-migrations:
     docker:
-    - image: circleci/node:13.8.0
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - run:
@@ -301,7 +301,7 @@ jobs:
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - revert-migrations
       - destroy-environment
-                    
+
   deploy-backend:
     docker:
       - image: python:3.11-rc-alpine
@@ -364,7 +364,7 @@ jobs:
               return 1
             fi
       - destroy-environment
-      - revert-migrations  
+      - revert-migrations
 
   cloudfront-update:
     docker:
@@ -384,7 +384,7 @@ jobs:
             --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
             --tags project=udapeople
       - destroy-environment
-      - revert-migrations 
+      - revert-migrations
 
   cleanup:
     docker:
@@ -406,7 +406,7 @@ jobs:
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
             fi
 
-            
+
 
 workflows:
   send-notification:
