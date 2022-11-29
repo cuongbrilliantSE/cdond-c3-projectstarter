@@ -449,27 +449,27 @@ jobs:
 workflows:
   default:
     jobs: ## BUILD AND DEPLOY
-#      - install-backend-dependencies
-#      - install-frontend-dependencies
-#
-#      - build-backend:
-#          requires:
-#            - install-backend-dependencies
-#      - build-frontend:
-#          requires:
-#            - install-frontend-dependencies
-#      - test-backend:
-#          requires:
-#            - build-backend
-#      - test-frontend:
-#          requires:
-#            - build-frontend
-#      - scan-backend:
-#          requires:
-#            - build-backend
-#      - scan-frontend:
-#          requires:
-#            - build-frontend
+      - install-backend-dependencies
+      - install-frontend-dependencies
+
+      - build-backend:
+          requires:
+            - install-backend-dependencies
+      - build-frontend:
+          requires:
+            - install-frontend-dependencies
+      - test-backend:
+          requires:
+            - build-backend
+      - test-frontend:
+          requires:
+            - build-frontend
+      - scan-backend:
+          requires:
+            - build-backend
+      - scan-frontend:
+          requires:
+            - build-frontend
 
       ## INFRASTRUCTURE
       - deploy-infrastructure:
@@ -477,20 +477,15 @@ workflows:
             branches:
               only:
                 - master
-#          requires:
-#            - test-frontend
-#            - test-backend
-#            - scan-frontend
-#            - scan-backend
       - configure-infrastructure:
           requires:
             - deploy-infrastructure
       - run-migrations:
           requires:
-#            - test-backend
-#            - test-frontend
-#            - scan-backend
-#            - scan-frontend
+            - test-backend
+            - test-frontend
+            - scan-backend
+            - scan-frontend
             - configure-infrastructure
           filters:
             branches:
