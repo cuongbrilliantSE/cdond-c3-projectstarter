@@ -215,8 +215,8 @@ jobs:
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --output text >> inventory
-            cat inventory
+              --output text >> inventory.txt
+            cat inventory.txt
       - persist_to_workspace:
           root: .
           paths:
@@ -238,7 +238,7 @@ jobs:
           name: Install dependencies
           working_directory: ./.circleci/ansible
           command: |
-            apk add --update ansible
+            apk add --update tar gzip ansible awscli
             ansible --version
       - run:
           name: Configure server
@@ -246,8 +246,8 @@ jobs:
           command: |
             pwd &&
             ls -la
-            cat inventory
-            ansible-playbook -i inventory configure-server.yaml
+            cat inventory.txt
+            ansible-playbook -i inventory.txt configure-server.yml
       - destroy_environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
@@ -263,22 +263,24 @@ jobs:
           name: Install AWS CLI dependencies
           working_directory: /tmp
           command: |
-            sudo apt-get update && sudo apt-get install -yy less
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
+            apk add --update --no-cache tar gzip nodejs npm aws-cli curl
+      - restore_cache:
+          keys: [build-backend]
       - run:
           name: Run migrations
           working_directory: ./backend
           command: |
-            npm run migrations > migration_status
+            npm i
+            npm run build
+            npm run migrations > migrations.txt
       - run:
           name: Send migration results to kvdb
           working_directory: ./backend
           command: |
-            if grep -q "has been executed successfully" migration_status
+            if grep -q "has been executed successfully" ~/project/backend/migrations_dump.txt 
             then
               echo "DB migration was successful, will update kvdb..."
+              curl --insecure https://kvdb.io/G3dgQcEmk7WDfEqLw2Agj4/migration_${CIRCLE_WORKFLOW_ID:0:7} -d 'i'
             else
               echo "DB migration failed, please verify setup! Probably the database already exists. Verify setup!"
             fi
@@ -480,20 +482,20 @@ workflows:
             - test-backend
             - scan-frontend
             - scan-backend
-#      - configure-infrastructure:
-#          requires:
-#            - deploy-infrastructure
-#      - run-migrations:
-#          requires:
-#            - test-backend
-#            - test-frontend
-#            - scan-backend
-#            - scan-frontend
-#            - configure-infrastructure
-#          filters:
-#            branches:
-#              only:
-#                - master
+      - configure-infrastructure:
+          requires:
+            - deploy-infrastructure
+      - run-migrations:
+          requires:
+            - test-backend
+            - test-frontend
+            - scan-backend
+            - scan-frontend
+            - configure-infrastructure
+          filters:
+            branches:
+              only:
+                - master
 #      - deploy-backend:
 #          requires:
 #            - run-migrations
