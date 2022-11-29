@@ -449,15 +449,15 @@ jobs:
 workflows:
   default:
     jobs: ## BUILD AND DEPLOY
-      - install-backend-dependencies
-      - install-frontend-dependencies
-
-      - build-backend:
-          requires:
-            - install-backend-dependencies
-      - build-frontend:
-          requires:
-            - install-frontend-dependencies
+#      - install-backend-dependencies
+#      - install-frontend-dependencies
+#
+#      - build-backend:
+#          requires:
+#            - install-backend-dependencies
+#      - build-frontend:
+#          requires:
+#            - install-frontend-dependencies
 #      - test-backend:
 #          requires:
 #            - build-backend
